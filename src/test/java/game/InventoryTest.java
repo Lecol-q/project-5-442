@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
@@ -63,5 +64,19 @@ public class InventoryTest {
 
         assertFalse(inventory.contains(fourthItem));
         assertTrue(inventory.isFull());
+    }
+
+    @Test
+    public void testItemsReturnsDefensiveCopy() {
+        Inventory inventory = new Inventory(1);
+        Item storedItem = new Item('a', Color.WHITE, "Sword", null);
+        inventory.add(storedItem);
+
+        Item[] items = inventory.getItems();
+
+        assertNotSame(inventory.getItems(), items);
+        items[0] = new Item('b', Color.WHITE, "Shield", null);
+
+        assertEquals(storedItem, inventory.get(0));
     }
 }
