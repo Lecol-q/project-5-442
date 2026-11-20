@@ -60,4 +60,37 @@ public class CreatureTest {
         assertEquals(null, world.creature(1, 1, 0));
     }
 
+    @Test
+    public void meleeAttackDealsOneDamageWhenDefenseEqualsAttack() {
+        Creature defender = new Creature(world, 'd', Color.RED, "defender", 100, 0, 10);
+        defender.x = 2;
+        defender.y = 1;
+        defender.z = 0;
+
+        new CreatureAi(creature);
+        new CreatureAi(defender);
+        world.add(creature);
+        world.add(defender);
+
+        creature.meleeAttack(defender);
+
+        assertEquals(99, defender.hp());
+    }
+
+    @Test
+    public void meleeAttackDealsOneDamageWhenDefenseExceedsAttack() {
+        Creature defender = new Creature(world, 'd', Color.RED, "defender", 100, 0, 11);
+        defender.x = 2;
+        defender.y = 1;
+        defender.z = 0;
+
+        new CreatureAi(creature);
+        new CreatureAi(defender);
+        world.add(creature);
+        world.add(defender);
+
+        creature.meleeAttack(defender);
+
+        assertEquals(99, defender.hp());
+    }
 }
