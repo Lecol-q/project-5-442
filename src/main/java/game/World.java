@@ -3,6 +3,7 @@ package game;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class World {
 	private Tile[][][] tiles;
@@ -71,17 +72,12 @@ public class World {
 	}
 	
 	public void addAtEmptyLocation(Creature creature, int z){
-		int x;
-		int y;
-		
-		do {
-			x = (int)(Math.random() * width);
-			y = (int)(Math.random() * height);
-		} 
-		while (!tile(x,y,z).isGround() || creature(x,y,z) != null);
-		
-		creature.x = x;
-		creature.y = y;
+		List<Point> locations = groundLocationsAtDepth(z);
+		locations.removeIf(point -> creature(point.x, point.y, point.z) != null);
+		Point location = chooseEmptyGroundLocation(locations, "creature", z);
+
+		creature.x = location.x;
+		creature.y = location.y;
 		creature.z = z;
 		creatures.add(creature);
 	}
@@ -115,16 +111,32 @@ public class World {
 	}
 	
 	public void addAtEmptyLocation(Item item, int depth) {
-		int x;
-		int y;
-		
-		do {
-			x = (int)(Math.random() * width);
-			y = (int)(Math.random() * height);
-		} 
-		while (!tile(x,y,depth).isGround() || item(x,y,depth) != null);
-		
-		items[x][y][depth] = item;
+		List<Point> locations = groundLocationsAtDepth(depth);
+		locations.removeIf(point -> item(point.x, point.y, point.z) != null);
+		Point location = chooseEmptyGroundLocation(locations, "item", depth);
+
+		items[location.x][location.y][depth] = item;
+	}
+
+	private List<Point> groundLocationsAtDepth(int z) {
+		if (z < 0 || z >= depth)
+			throw new IllegalArgumentException("Depth is outside the world: " + z);
+
+		List<Point> locations = new ArrayList<Point>();
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++){
+				if (tile(x, y, z).isGround())
+					locations.add(new Point(x, y, z));
+			}
+		}
+		return locations;
+	}
+
+	private Point chooseEmptyGroundLocation(List<Point> locations, String entityType, int z) {
+		if (locations.isEmpty())
+			throw new IllegalStateException("No empty ground location available for " + entityType + " at depth " + z);
+
+		return locations.get(ThreadLocalRandom.current().nextInt(locations.size()));
 	}
 
 	public void remove(int x, int y, int z) {
