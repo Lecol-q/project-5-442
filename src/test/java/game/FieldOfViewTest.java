@@ -57,6 +57,20 @@ public class FieldOfViewTest {
         assertFalse(fieldOfView.isVisible(1, 1, 0));
     }
 
+    @Test
+    public void isVisibleRejectsCoordinatesOutsideWorldAndOtherDepths() {
+        FieldOfView fieldOfView = new FieldOfView(new World(floorTiles(3, 3, 2)));
+
+        fieldOfView.update(1, 1, 0, 2);
+
+        assertTrue(fieldOfView.isVisible(1, 1, 0));
+        assertFalse(fieldOfView.isVisible(-1, 1, 0));
+        assertFalse(fieldOfView.isVisible(1, -1, 0));
+        assertFalse(fieldOfView.isVisible(3, 1, 0));
+        assertFalse(fieldOfView.isVisible(1, 3, 0));
+        assertFalse(fieldOfView.isVisible(1, 1, 1));
+    }
+
     private Tile[][][] floorTiles(int width, int height, int depth) {
         Tile[][][] tiles = new Tile[width][height][depth];
         for (int x = 0; x < width; x++)
