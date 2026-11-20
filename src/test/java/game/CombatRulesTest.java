@@ -19,6 +19,8 @@ public class CombatRulesTest {
     public void isDeadTest() {
         CombatRules combatRules = new CombatRules();
 
+        assertTrue(combatRules.isDead(0));
+        assertFalse(combatRules.isDead(1));
         assertFalse(combatRules.isDead(combatRules.calculateNewHp(50, 100, 10)));
         assertFalse(combatRules.isDead(combatRules.calculateNewHp(90, 100, 15)));
         assertTrue(combatRules.isDead(combatRules.calculateNewHp(10, 100, -20)));
