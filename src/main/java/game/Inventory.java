@@ -1,9 +1,11 @@
 package game;
 
+import java.util.Arrays;
+
 public class Inventory {
 
 	private Item[] items;
-	public Item[] getItems() { return items; }
+	public Item[] getItems() { return Arrays.copyOf(items, items.length); }
 	public Item get(int i) { return items[i]; }
 	
 	public Inventory(int max){
